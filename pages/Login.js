@@ -1,12 +1,10 @@
 import React, { useState, useContext, useEffect } from "react";
-import {Text,StyleSheet,View,Image, TextInput} from 'react-native';
-import {
-    Button,
-  } from "native-base";
+import {Text,View,Image, TextInput} from 'react-native';
+import {Button} from "native-base";
 import Icon from '@expo/vector-icons/AntDesign';
 import { useNavigation } from "@react-navigation/native";
 import { GlobalContext } from "../App";
-import { AsyncStorage } from 'react-native';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Login() {
 
@@ -18,24 +16,6 @@ export default function Login() {
         }
       }
 
-    const kuninAngData = async () => {
-        try {
-          const value = await AsyncStorage.getItem('session_status')
-          if(value !== null) {
-            return false;
-          }else{
-            return true;
-          }
-        } catch(e) {
-          // error reading value
-        }
-      }
-
-    const burahinAngAsyncStorage = async() => {
-        AsyncStorage.clear();
-        alert("Logout Sucessfull");
-    }
-
     const { db } = useContext(GlobalContext);
 
     const [username, setUsername] = useState("");
@@ -45,19 +25,17 @@ export default function Login() {
 
     const getdata = async () =>{
 
-        useEffect(() => {
-            // if(kuninAngData());
-            alert(kuninAngData());
-        });
-
         const sql = `SELECT * FROM users WHERE username = '${username}' AND password = '${password}'`;
 
         try {
             let items = await db.exec(sql);
             if(items.length>0){
                 alert("Login Successfully");
-                italaAngData("active");
-                // navigation.navigate("ListUser");
+                const jsonValue = JSON.stringify(items)
+                italaAngData(jsonValue);
+                setUsername("");
+                setPassword("");
+                navigation.navigate("ListUser");
             }else{
                 alert("Login Failed");
             }
@@ -69,15 +47,16 @@ export default function Login() {
 
     return (
         <View style={{backgroundColor:"#FFF",height:"100%"}}>
-                 <Image source ={require('../assets/favicon.png')}
-                    style={{width:"100%",height:"43%"}}
+                 <Image source ={require('../assets/innovatech.gif')}
+                    style={{width:"100%",height:"40%"}}
                 />
                 <Text
                  style={{
                      fontSize:30,
+                     marginTop:20,
                      alignSelf:"center",
                  }}
-                >Save the world</Text>
+                >InnovaTech</Text>
 
                 <Text
                 style={{
@@ -87,7 +66,7 @@ export default function Login() {
                     opacity:0.4
                 }}
                 >
-                    Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint. Velit officia consequat duis enim velit mollit.
+                    Innovation Through Science and Technology 
                 </Text>
 
                 <View style={{
@@ -101,9 +80,9 @@ export default function Login() {
                     borderRadius:23,
                     paddingVertical:2
                 }}>
-                    <Icon name="mail" color="#00716F" size={24}/>
+                    <Icon name="user" color="#00716F" size={24}/>
                     <TextInput 
-                        placeholder="Email"
+                        placeholder="Username"
                         value={username}
                         onChangeText={setUsername}
                         style={{paddingHorizontal:10}}
@@ -120,7 +99,7 @@ export default function Login() {
                     borderRadius:23,
                     paddingVertical:2
                 }}>
-                    <Icon name="mail" color="#00716F" size={24}/>
+                    <Icon name="lock" color="#00716F" size={24}/>
                     <TextInput 
                         placeholder="Password"
                         value={password}
@@ -130,7 +109,8 @@ export default function Login() {
                     />
                 </View>
 
-                <Button style={{
+                <Button 
+                style={{
                     marginHorizontal:55,
                     alignItems:"center",
                     justifyContent:"center",
@@ -139,19 +119,7 @@ export default function Login() {
                     paddingVertical:10,
                     borderRadius:23
                 }} onPress={getdata}>
-                Save
-              </Button>
-
-              <Button style={{
-                    marginHorizontal:55,
-                    alignItems:"center",
-                    justifyContent:"center",
-                    marginTop:30,
-                    backgroundColor:"#00716F",
-                    paddingVertical:10,
-                    borderRadius:23
-                }} onPress={burahinAngAsyncStorage}>
-                Logout
+                Login
               </Button>
           </View>
     )

@@ -3,10 +3,27 @@ import { Box, Center, HStack, Heading, VStack, Spinner } from "native-base";
 import { StatusBar } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { GlobalContext } from "../App";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function SetupDB() {
   const navigation = useNavigation();
   const { db } = useContext(GlobalContext);
+
+  const kuninAngData = async () => {
+    try {
+        const jsonValue = await AsyncStorage.getItem('session_status');
+       
+        if(jsonValue===null){
+          navigation.navigate("Login");
+        }else{
+          console.log(JSON.parse(jsonValue));
+          navigation.navigate("ListUser");
+        }
+
+    } catch(e) {
+        // console.log(e);
+    }
+  }
 
   useEffect(() => {
     async function setupDatabase() {
@@ -21,7 +38,7 @@ export default function SetupDB() {
       `;
       try {
         await db.exec(createProductsTableQuery);
-        navigation.navigate("Login");
+        kuninAngData();
       } catch (e) {
         console.log(e);
       }

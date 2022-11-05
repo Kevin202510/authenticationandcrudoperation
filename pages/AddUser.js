@@ -33,6 +33,7 @@ export default function AddUser() {
       await db.exec(sql);
       alert("Successfully added the User.");
       clearForm();
+      navigation.navigate("ListUser");
     } catch (e) {
       alert(e);
     }
